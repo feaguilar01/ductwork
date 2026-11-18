@@ -1,0 +1,117 @@
+/* DuctControl - paleta tomada del taller: lámina galvanizada, tinta de plano, azul de ducto */
+:root {
+  --paper: #EDF0F2;
+  --panel: #FFFFFF;
+  --ink: #17232D;
+  --ink-soft: #5A6873;
+  --steel: #C5CED4;
+  --steel-light: #E1E6E9;
+  --duct: #2B6E8F;
+  --duct-dark: #1D536D;
+  --ok: #2F7D58;
+  --warn: #C98A12;
+  --over: #B8402B;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+h1, h2, h3, h4, h5, .brand, .kpi-value {
+  font-family: "Barlow Semi Condensed", "Barlow", Arial, sans-serif;
+  letter-spacing: .01em;
+}
+h1 { font-size: 1.9rem; font-weight: 600; }
+h2 { font-size: 1.35rem; font-weight: 600; }
+a { color: var(--duct); }
+a:hover { color: var(--duct-dark); }
+.text-soft { color: var(--ink-soft); }
+
+/* ---------- Barra superior ---------- */
+.topbar { background: var(--ink); border-bottom: 4px solid var(--duct); }
+.topbar .brand { color: #fff; font-size: 1.5rem; font-weight: 700; text-decoration: none; }
+.topbar .brand span { color: var(--steel); font-weight: 400; }
+.topbar .nav-link { color: var(--steel); font-weight: 500; padding: .9rem 1rem; border-radius: 0; }
+.topbar .nav-link:hover { color: #fff; }
+.topbar .nav-link.active { color: #fff; box-shadow: inset 0 -3px 0 var(--steel); }
+
+/* ---------- Paneles ---------- */
+.panel { background: var(--panel); border: 1px solid var(--steel); border-radius: 4px; }
+.panel-head { padding: .85rem 1.1rem; border-bottom: 1px solid var(--steel-light); }
+.panel-head h2 { margin: 0; }
+.panel-body { padding: 1.1rem; }
+
+/* ---------- Indicadores del dashboard ---------- */
+.kpi-strip { display: flex; flex-wrap: wrap; background: var(--ink); color: #fff; border-radius: 4px; }
+.kpi { flex: 1 1 180px; padding: 1.1rem 1.3rem; border-right: 1px solid #2E3E4A; }
+.kpi:last-child { border-right: 0; }
+.kpi-value { font-size: 2.2rem; font-weight: 600; line-height: 1.1; }
+.kpi-label { color: var(--steel); font-size: .95rem; }
+.kpi.alert .kpi-value { color: #FF8A73; }
+
+/* ---------- Medidor de costo: tramo de ducto con costuras cada 10% ---------- */
+.gauge { position: relative; height: 12px; min-width: 110px; background: var(--steel-light); border-radius: 2px; overflow: hidden; }
+.gauge > span { display: block; height: 100%; background: var(--ok); }
+.gauge.warn > span { background: var(--warn); }
+.gauge.over > span { background: var(--over); }
+.gauge::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 1px), rgba(255,255,255,.65) calc(10% - 1px), rgba(255,255,255,.65) 10%);
+}
+.gauge-note { font-size: .85rem; color: var(--ink-soft); }
+
+/* ---------- Tablas ---------- */
+.table { --bs-table-bg: transparent; margin-bottom: 0; }
+.table > :not(caption) > * > * { padding: .65rem .8rem; vertical-align: middle; }
+.table thead th { font-weight: 600; color: var(--ink-soft); border-bottom: 2px solid var(--steel); white-space: nowrap; }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table tfoot td { font-weight: 600; border-top: 2px solid var(--steel); }
+
+/* ---------- Estados ---------- */
+.badge-st { display: inline-block; padding: .15rem .6rem; border-radius: 2px; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.st-estimado, .st-pendiente { background: var(--steel-light); color: var(--ink); }
+.st-aprobado { background: #D6E6F0; color: var(--duct-dark); }
+.st-en-fabricacion, .st-fabricado { background: #F5E6C3; color: #7A5200; }
+.st-en-instalacion { background: #C9E3EC; color: var(--duct-dark); }
+.st-terminado, .st-enviado { background: #D2EBDD; color: #1E5A3E; }
+
+/* ---------- Formularios y botones ---------- */
+.btn-duct { background: var(--duct); border-color: var(--duct); color: #fff; font-weight: 600; }
+.btn-duct:hover { background: var(--duct-dark); border-color: var(--duct-dark); color: #fff; }
+.btn-outline-duct { border-color: var(--duct); color: var(--duct); font-weight: 600; }
+.btn-outline-duct:hover { background: var(--duct); color: #fff; }
+.form-control, .form-select { border-color: var(--steel); border-radius: 3px; }
+.form-control:focus, .form-select:focus { border-color: var(--duct); box-shadow: 0 0 0 .2rem rgba(43,110,143,.2); }
+.form-label { font-weight: 500; font-size: .92rem; margin-bottom: .2rem; }
+details.add-form { margin-top: 1rem; }
+details.add-form > summary { cursor: pointer; color: var(--duct); font-weight: 600; }
+details.add-form[open] > summary { margin-bottom: .8rem; }
+.select-inline { width: auto; display: inline-block; padding-top: .2rem; padding-bottom: .2rem; font-size: .9rem; }
+
+/* ---------- Detalle del proyecto ---------- */
+.section-nav a { margin-right: 1.2rem; font-weight: 500; text-decoration: none; }
+.section-nav a:hover { text-decoration: underline; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; background: var(--steel); border: 1px solid var(--steel); border-radius: 4px; overflow: hidden; }
+.summary-grid > div { background: var(--panel); padding: .9rem 1.1rem; }
+.summary-grid .label { color: var(--ink-soft); font-size: .9rem; }
+.summary-grid .value { font-family: "Barlow Semi Condensed", Arial, sans-serif; font-size: 1.6rem; font-weight: 600; }
+.value.good { color: var(--ok); }
+.value.bad { color: var(--over); }
+section[id] { scroll-margin-top: 1rem; }
+.empty { color: var(--ink-soft); padding: 1rem 0; }
+
+:focus-visible { outline: 3px solid var(--duct); outline-offset: 2px; }
+@media (max-width: 576px) { h1 { font-size: 1.5rem; } .kpi { border-right: 0; border-bottom: 1px solid #2E3E4A; } }
+
+/* ---------- Reportes ---------- */
+.summary-grid .value.is-text { font-size: 1.15rem; line-height: 1.6; }
+@media print {
+  .topbar, .no-print, footer { display: none !important; }
+  body { background: #fff; }
+  .panel { border: 0; break-inside: avoid; }
+  .summary-grid { border-color: #999; }
+  main.container { max-width: 100%; padding: 0 !important; }
+}

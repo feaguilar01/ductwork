@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "macros.html" import gauge, badge %}
+{% block title %}Projects · DuctControl{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="mb-0">Projects</h1>
+  <a class="btn btn-duct" href="/projects/new">New Project</a>
+</div>
+
+<div class="panel">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr>
+        <th>Project</th><th>Client</th><th>Status</th>
+        <th class="num">Budgeted cost</th><th class="num">Actual cost</th><th class="num">Sale price</th><th>Used cost</th>
+      </tr></thead>
+      <tbody>
+      {% for p in projects %}
+        <tr>
+          <td><a href="/projects/{{ p.id }}">{{ p.name }}</a><div class="gauge-note">{{ p.city }}, {{ 'VA' }}</div></td>
+          <td>{{ p.client_name }}</td>
+          <td>{{ badge(p.status) }}</td>
+          <td class="num">{{ p.budget_cost|money }}</td>
+          <td class="num">{{ p.actual_cost|money }}</td>
+          <td class="num">{{ p.sale_price|money }}</td>
+          <td style="min-width:150px">{{ gauge(p.cost_pct) }}<div class="gauge-note">{{ p.cost_pct|round(0)|int }}%</div></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="empty">There are no projects yet. Create the first one using "New project."</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

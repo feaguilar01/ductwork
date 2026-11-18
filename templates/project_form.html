@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}New Project · DuctControl{% endblock %}
+
+{% block content %}
+<h1 class="mb-3">New Project</h1>
+
+<div class="panel" style="max-width: 760px;">
+  <div class="panel-body">
+    {% if not clients %}
+      <p>First, you need a client. <a href="/clients">Add Client</a></p>
+    {% else %}
+    <form method="post" action="/projects" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="client_id">Client</label>
+        <select class="form-select" id="client_id" name="client_id" required>
+          {% for c in clients %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="status">Status</label>
+        <select class="form-select" id="status" name="status">
+          {% for s in statuses %}<option>{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="name">Project Name</label>
+        <input class="form-control" id="name" name="name" required>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label" for="address">Address</label>
+        <input class="form-control" id="address" name="address">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="city">City</label>
+        <input class="form-control" id="city" name="city">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="labor_rate">Labor cost ($ por hora)</label>
+        <input class="form-control" id="labor_rate" name="labor_rate" type="number" step="0.01" value="65">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="margin_pct">Profit margin (%)</label>
+        <input class="form-control" id="margin_pct" name="margin_pct" type="number" step="0.01" value="18">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="tax_pct">Sales tax (%)</label>
+        <input class="form-control" id="tax_pct" name="tax_pct" type="number" step="0.01" value="5.3">
+      </div>
+      <div class="col-12">
+        <button class="btn btn-duct" type="submit">Create project</button>
+        <a class="btn btn-link" href="/projects">Cancel</a>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

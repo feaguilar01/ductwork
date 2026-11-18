@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ report.title }} · DuctControl{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+  <div>
+    <h1 class="mb-1">{{ report.title }}</h1>
+    <div class="text-soft">{{ report.subtitle }}</div>
+    <div class="gauge-note">Generated on {{ generated }}</div>
+  </div>
+  <div class="d-flex flex-wrap gap-2 no-print">
+    <a class="btn btn-outline-duct" href="/reports">All reports</a>
+    <a class="btn btn-duct" href="{{ links.pdf }}">Download PDF</a>
+    <a class="btn btn-duct" href="{{ links.xlsx }}">Download Excel</a>
+    <button class="btn btn-outline-duct" type="button" onclick="window.print()">Print</button>
+  </div>
+</div>
+
+{% if report.summary_view %}
+<div class="summary-grid mb-4">
+  {% for s in report.summary_view %}
+  <div><div class="label">{{ s.label }}</div><div class="value {{ 'is-text' if s.kind == 'text' }}">{{ s.text }}</div></div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% for t in report.tables %}
+<div class="panel mb-4">
+  {% if t.name %}<div class="panel-head"><h2>{{ t.name }}</h2></div>{% endif %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr>
+        {% for h in t.head %}<th class="{{ 'num' if h.align == 'end' }}">{{ h.label }}</th>{% endfor %}
+      </tr></thead>
+      <tbody>
+      {% for row in t.view_rows %}
+        <tr>{% for cell in row %}<td class="{{ 'num' if t.head[loop.index0].align == 'end' }}">{{ cell }}</td>{% endfor %}</tr>
+      {% else %}
+        <tr><td colspan="{{ t.head|length }}" class="empty">No records for this report.</td></tr>
+      {% endfor %}
+      </tbody>
+      {% if t.view_totals %}
+      <tfoot><tr>{% for cell in t.view_totals %}<td class="{{ 'num' if t.head[loop.index0].align == 'end' }}">{{ cell }}</td>{% endfor %}</tr></tfoot>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

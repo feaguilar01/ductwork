@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% from "macros.html" import gauge, badge %}
+{% block title %}Dashboard · DuctControl{% endblock %}
+
+{% block content %}
+<h1 class="mb-3">Dashboard</h1>
+
+<div class="kpi-strip mb-4">
+  <div class="kpi"><div class="kpi-value">{{ active|length }}</div><div class="kpi-label">Active Projects</div></div>
+  <div class="kpi"><div class="kpi-value">{{ contract_value|money }}</div><div class="kpi-label">Value of active projects</div></div>
+  <div class="kpi"><div class="kpi-value">{{ projected_profit|money }}</div><div class="kpi-label">Projected gain today</div></div>
+  <div class="kpi {{ 'alert' if at_risk }}"><div class="kpi-value">{{ at_risk|length }}</div><div class="kpi-label">Projects at risk (90% or more)</div></div>
+  <div class="kpi"><div class="kpi-value">{{ week_hours|number(0) }}</div><div class="kpi-label">Hours this week</div></div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <div class="panel h-100">
+      <div class="panel-head"><h2>Budget versus actual cost</h2></div>
+      <div class="panel-body">
+        {% if chart_labels %}
+          <div style="position: relative; height: {{ 90 + chart_labels|length * 62 }}px;"><canvas id="costChart"></canvas></div>
+        {% else %}
+          <p class="empty">There are still no projects with a budget.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="panel h-100">
+      <div class="panel-head"><h2>Projects at risk</h2></div>
+      <div class="panel-body">
+        {% for p in at_risk %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between">
+              <a href="/projects/{{ p.id }}"><strong>{{ p.name }}</strong></a>
+              <strong>{{ p.cost_pct|round(0)|int }}%</strong>
+            </div>
+            {{ gauge(p.cost_pct) }}
+            <div class="gauge-note mt-1">Costo real {{ p.actual_cost|money }} de {{ p.budget_cost|money }} presupuestados · avance {{ p.progress|round(0)|int }}%</div>
+          </div>
+        {% else %}
+          <p class="empty">No project has used 90% of its budget.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel mb-4">
+  <div class="panel-head"><h2>Active Projects</h2></div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr>
+        <th>Project</th><th>Client</th><th>Status</th><th class="num">Sale price</th>
+        <th>Costo usado</th><th>Installation progress</th>
+      </tr></thead>
+      <tbody>
+      {% for p in active %}
+        <tr>
+          <td><a href="/projects/{{ p.id }}">{{ p.name }}</a><div class="gauge-note">{{ p.city }}</div></td>
+          <td>{{ p.client_name }}</td>
+          <td>{{ badge(p.status) }}</td>
+          <td class="num">{{ p.sale_price|money }}</td>
+          <td style="min-width:150px">{{ gauge(p.cost_pct) }}<div class="gauge-note">{{ p.cost_pct|round(0)|int }}%</div></td>
+          <td style="min-width:150px"><div class="gauge" style="--x:0"><span style="width: {{ p.progress|float|round(0) }}%; background: var(--duct)"></span></div><div class="gauge-note">{{ p.progress|round(0)|int }}%</div></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="empty">There are no active projects.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>Parts to be manufactured or shipped</h2></div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Project</th><th>Pieza</th><th class="num">Quantity</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for f in pending %}
+        <tr>
+          <td><a href="/projects/{{ f.project_id }}#fabricacion">{{ f.project_name }}</a></td>
+          <td>{{ f.piece }}</td>
+          <td class="num">{{ f.quantity }}</td>
+          <td>{{ badge(f.status) }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="empty">There are no pending parts.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if chart_labels %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('costChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_labels|tojson }},
+      datasets: [
+        { label: 'Presupuesto (costo)', data: {{ chart_budget|tojson }}, backgroundColor: '#C5CED4' },
+        { label: 'Costo real', data: {{ chart_actual|tojson }}, backgroundColor: '#2B6E8F' }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: { x: { ticks: { callback: v => '$' + v.toLocaleString() } } }
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

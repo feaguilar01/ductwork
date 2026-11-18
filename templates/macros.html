@@ -1,0 +1,10 @@
+{% macro gauge(pct) -%}
+{% set v = pct|float %}
+<div class="gauge {{ 'over' if v >= 90 else ('warn' if v >= 75 else '') }}" role="img" aria-label="{{ v|round(0)|int }}% del presupuesto usado">
+  <span style="width: {{ [v, 100]|min }}%"></span>
+</div>
+{%- endmacro %}
+
+{% macro badge(status) -%}
+<span class="badge-st st-{{ status|slug }}">{{ status }}</span>
+{%- endmacro %}

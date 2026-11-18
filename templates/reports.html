@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Reportes · DuctControl{% endblock %}
+
+{% block content %}
+<h1 class="mb-1">Reports</h1>
+<p class="text-soft mb-4">Each report can be viewed on-screen, downloaded as a PDF, or downloaded in Excel format..</p>
+
+<div class="row g-4">
+  {% for key, r in reports.items() %}
+  <div class="col-lg-6">
+    <div class="panel h-100">
+      <div class="panel-head"><h2>{{ r.title }}</h2></div>
+      <div class="panel-body">
+        <p class="text-soft">{{ r.desc }}</p>
+        <form method="get" action="/reports/{{ key }}" class="row g-2 align-items-end">
+          {% if 'project' in r.filters %}
+          <div class="col-12">
+            <label class="form-label" for="p-{{ key }}">Project</label>
+            <select class="form-select" id="p-{{ key }}" name="project_id" required>
+              {% for p in projects %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          {% if 'dates' in r.filters %}
+          <div class="col-sm-6">
+            <label class="form-label" for="f-{{ key }}">From</label>
+            <input class="form-control" type="date" id="f-{{ key }}" name="date_from" value="{{ date_from }}">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label" for="t-{{ key }}">To</label>
+            <input class="form-control" type="date" id="t-{{ key }}" name="date_to" value="{{ date_to }}">
+          </div>
+          {% endif %}
+          <div class="col-12 d-flex flex-wrap gap-2 mt-2">
+            <button class="btn btn-duct" type="submit" name="format" value="html">View on screen</button>
+            <button class="btn btn-outline-duct" type="submit" name="format" value="pdf">Download PDF</button>
+            <button class="btn btn-outline-duct" type="submit" name="format" value="xlsx">Download Excel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
